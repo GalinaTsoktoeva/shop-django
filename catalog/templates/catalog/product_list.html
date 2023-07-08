@@ -1,0 +1,32 @@
+{% extends 'catalog/base.html' %}
+{% block content%}
+<div class="col-12 mb-5">
+    <a class="btn btn-primary" href="{% url 'catalog:create_product'%}">Добавить студента</a>
+</div>
+{% for object in object_list %}
+<div class="col-3">
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal"><a href="{% url 'catalog:view_product' object.pk %}">{{ object.name | title }} </a></h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">$ {{object.price| title}}</h1>
+            <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                <li>- {{object.description| title}}</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'catalog:view_product' object.pk %}">View</a></button>
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'catalog:update_product' object.pk %}">Edit</a></button>
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'catalog:delete_product' object.pk %}">Delete</a></button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

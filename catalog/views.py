@@ -1,17 +1,13 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.models import Product
 
 
-def index(request):
-   products_list = Product.objects.all()
-   context = {
-       'objects_list': products_list,
-       'title': 'Главная'
-   }
-   return render(request,'catalog/index.html', context)
-# def index(request):
-#     return render(request, 'catalog/index.html')
+class ProductListView(ListView):
+    model = Product
+
 
 def contacts(request):
     if request.method == 'POST':
@@ -24,10 +20,24 @@ def contacts(request):
     }
     return render(request, 'catalog/contacts.html', context)
 
-def product(request, pk):
-    print(request)
-    context = {
-        'object_list': Product.objects.get(pk=pk),
-        'title': 'Карточка товара'
-    }
-    return render(request, 'catalog/product.html', context)
+
+class ProductDetailView(DetailView):
+    model = Product
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    fields = ('name', 'price', 'category', 'img')
+    success_url = reverse_lazy('catalog:index')
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    fields = ('name', 'price', 'category', 'img')
+    success_url = reverse_lazy('catalog:index')
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:index')
+
+

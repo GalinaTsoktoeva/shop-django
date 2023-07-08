@@ -1,0 +1,18 @@
+{% extends 'blog/base.html' %}
+{% load my_tag %}
+{% block content %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <img src="{{ object.img|mediapath }}" class="card-img-top" alt="..." />
+    <h5 class="card-title">{{ object.title }}</h5>
+    <p class="card-text">{{object.content| title}}</p>
+    <p class="card-text">{{ object.description }}</p>
+    <p class="card-text">{{ object.data_create }}</p>
+    <p class="card-text">{{ object.is_published }}</p>
+    <a href="{% url 'blog:toggle_activity' object.pk %}" class="btn btn-primary">Опубликовать</a>
+  </div>
+  <div class="card-footer">
+    Просмотры: {{ object.count_views }}
+  </div>
+</div>
+{% endblock %}

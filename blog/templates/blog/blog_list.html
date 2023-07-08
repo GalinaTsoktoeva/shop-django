@@ -1,0 +1,35 @@
+{% extends 'blog/base.html' %}
+{% block content%}
+<div class="col-12 mb-5">
+    <a class="btn btn-primary" href="{% url 'blog:create_article'%}">Добавить статью</a>
+</div>
+{% for object in object_list %}
+<div class="col-3">
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal"><a href="{% url 'blog:view' object.pk %}">{{ object.title | title }} </a></h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                <li>- {{object.content| title}}</li>
+            </ul>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'blog:view' object.pk %}">View</a></button>
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'blog:update_article' object.pk %}">Edit</a></button>
+                <button type="button" class="btn btn-outline-primary"><a
+                        href="{% url 'blog:delete_article' object.pk %}">Delete</a></button>
+    </div>
+        </div>
+        {% if object.is_published %}
+        <a class="btn btn-warning" href="{% url 'blog:toggle_activity' object.pk %}">Опубликовать</a>
+        {% else %}
+        <a class="btn btn-success" href="{% url 'blog:toggle_activity' object.pk %}">Опубликовать</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

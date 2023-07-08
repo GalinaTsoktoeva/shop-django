@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+{% load my_tag %}
+{% block content %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <img src="{{ object.img|mediapath }}" class="card-img-top" alt="..." />
+    <h5 class="card-title">{{ object.name }}</h5>
+    <p class="card-text">{{ object.content }}</p>
+    <p class="card-text">{{ object.data_create }}</p>
+    <p class="card-text">{{ object.data_edit }}</p>
+    <p class="card-text "> {{object.count_views }}</p>
+    <a href="#" class="btn btn-primary">Купить</a>
+  </div>
+</div>
+{% endblock %}
