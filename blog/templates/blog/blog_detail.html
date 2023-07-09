@@ -1,21 +1,28 @@
 {% extends 'blog/base.html' %}
 {% load my_tag %}
 {% block content %}
-<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <img src="{{ object.img|mediapath }}" class="card-img-top" alt="..." />
-    <h5 class="card-title">{{ object.title }}</h5>
-    <p class="card-text">{{object.content| title}}</p>
-    <p class="card-text">{{ object.description }}</p>
-    <p class="card-text">{{ object.data_create }}</p>
-    <p class="card-text">{{ object.is_published }}</p>
-    <a href="{% url 'blog:toggle_activity' object.pk %}" class="btn btn-primary">Опубликовать</a>
-  </div>
-  <div class="card-footer">
-    Просмотры: {{ object.count_views }}
-    {% if object.count_views == 100 %}
-      <a href="{% url 'blog:send_msg' object.pk %}">Отправлено</a>
-    {% endif %}
-  </div>
+<div class="col-12">
+    <div class="card mb-3">
+        <div class="card-body">
+            <img src="{{ object.img|mediapath }}" class="card-img-top" alt="..."/>
+            <h5 class="card-title">{{ object.title }}</h5>
+            <p class="card-text">{{object.content| title}}</p>
+            <p class="card-text">{{ object.description }}</p>
+
+            {% if object.is_published %}
+            <a class="btn btn-warning" href="{% url 'blog:toggle_activity' object.pk %}">Опубликовать</a>
+            {% else %}
+            <a class="btn btn-success" href="{% url 'blog:toggle_activity' object.pk %}">Опубликовать</a>
+            {% endif %}
+        </div>
+        <div class="card-footer text-muted align-items-center">
+            <p class="card-text">Дата создания: {{ object.data_create }}</p>
+            <p>Просмотры: {{ object.count_views }}</p>
+            {% if object.count_views == 100 %}
+            <a href="{% url 'blog:send_msg' object.pk %}">Отправлено</a>
+        </div>
+        {% endif %}
+
+    </div>
 </div>
 {% endblock %}
