@@ -13,6 +13,9 @@
   </div>
   <div class="card-footer">
     Просмотры: {{ object.count_views }}
+    {% if object.count_views == 100 %}
+      <a href="{% url 'blog:send_msg' object.pk %}">Отправлено</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

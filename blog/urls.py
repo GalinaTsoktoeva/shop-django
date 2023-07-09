@@ -5,7 +5,7 @@ from django.urls import path
 
 from blog.apps import BlogConfig
 from blog.views import ArticleCreateView, ArticleListView, ArticleDetailView, ArticleUpdateView, ArticleDeleteView, \
-    toggle_activity
+    toggle_activity, send_msg
 from catalog.views import contacts, ProductListView, ProductDetailView, ProductCreateView, ProductUpdateView, \
     ProductDeleteView
 
@@ -18,4 +18,5 @@ urlpatterns = [
     path('edit/<int:pk>', ArticleUpdateView.as_view(), name='update_article'),
     path('delete/<int:pk>', ArticleDeleteView.as_view(), name='delete_article'),
     path('publish/<int:pk>', toggle_activity, name='toggle_activity'),
+    path('msg/<int:pk>', send_msg, name='send_msg'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
