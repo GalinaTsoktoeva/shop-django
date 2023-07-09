@@ -15,11 +15,15 @@
             <a class="btn btn-success" href="{% url 'blog:toggle_activity' object.pk %}">Опубликовать</a>
             {% endif %}
         </div>
-        <div class="card-footer text-muted align-items-center">
-            <p class="card-text">Дата создания: {{ object.data_create }}</p>
-            <p>Просмотры: {{ object.count_views }}</p>
+        <div class="card-footer text-muted ">
+          <div class="float-start">
+          <p class="card-text">Дата создания: {{ object.data_create }}</p>
+          </div>
+          <div class="float-md-end">
+            <p class="card-text ">Просмотры: {{ object.count_views }}</p>
             {% if object.count_views == 100 %}
             <a href="{% url 'blog:send_msg' object.pk %}">Отправлено</a>
+          </div>
         </div>
         {% endif %}
 
