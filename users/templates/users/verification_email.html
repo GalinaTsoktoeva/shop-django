@@ -1,0 +1,15 @@
+{% block content %}
+{% csrf_token %}
+{% autoescape off %}
+{% csrf_token %}
+Привет, {{ user.username }}!
+
+Пожалуйста, перейдите по ссылке ниже для активации вашей учетной записи:
+
+http://{{ domain }}{% url 'users:email_verification' uidb64=uid token=token %}
+
+Если вы не регистрировались на нашем сайте, проигнорируйте это письмо.
+
+
+{% endautoescape %}
+{% endblock %}
