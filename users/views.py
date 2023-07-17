@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
@@ -74,3 +76,17 @@ class EmailVerificationView(TemplateView):
                 return redirect('users:verification_failed')
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return redirect('users:verification_failed')
+
+
+def gen_new_pass(request):
+    new_password = ''
+    chars = '+-/*!&$#?=@<>abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    for i in range(8):
+        new_password += random.choice(chars)
+
+    request.user.set_password(new_password)
+    request.user.save()
+    send_mail('Ваш пароль изменен',
+              f"Ваш пароль: {new_password}", settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER])
+
+    return redirect('catalog:index')
