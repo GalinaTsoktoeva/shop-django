@@ -12,7 +12,7 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ('name', 'price', 'category', 'img')
+        fields = '__all__'
 
     def clean_name(self):
         arr_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']

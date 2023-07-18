@@ -9,6 +9,26 @@ from catalog.models import Product, Version
 
 class ProductListView(ListView):
     model = Product
+    template_name = 'catalog/product_list.html'
+    extra_context = {
+        'is_active_main': 'active'
+    }
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user)
+        else:
+            queryset = Product.objects.none
+
+        try:
+            for product in queryset:
+                version = product.version_set.all().filter(is_current=True).first()
+                product.version = version
+        except TypeError:
+            return queryset
+        return queryset
 
 
 def contacts(request):
@@ -30,7 +50,6 @@ class ProductDetailView(DetailView):
 class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
-    #fields = ('name', 'price', 'category', 'img')
     success_url = reverse_lazy('catalog:index')
 
 
@@ -50,7 +69,9 @@ class ProductUpdateView(UpdateView):
         return context_data
 
     def form_valid(self, form):
+        form.instance.user = self.request.user
         formset = self.get_context_data()['formset']
+        self.object = form.save()
 
         if formset.is_valid():
             formset.instance = self.object

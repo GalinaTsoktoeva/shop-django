@@ -27,7 +27,7 @@ class RegisterView(CreateView):
         # Деактивируем пользователя, пока он не подтвердит почту
         user.is_active = False
         #Устанавливаем ненужный пароль
-        user.set_unusable_password()
+        #user.set_unusable_password()
         user.save()
 
         #Отправляем письмо с токеном для верификации
@@ -44,7 +44,8 @@ class RegisterView(CreateView):
                 'token': token,
             }
         )
-        send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER])
+        print(user.email)
+        send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [user.email])
         return redirect('users:login')
 
 
@@ -70,12 +71,13 @@ class EmailVerificationView(TemplateView):
 
             if default_token_generator.check_token(user, token):
                 user.is_active = True
+                #user.set_password()
                 user.save()
                 return self.render_to_response({})
             else:
-                return redirect('users:verification_failed')
+                return redirect('users:verify_no')
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return redirect('users:verification_failed')
+            return redirect('users:verify_no')
 
 
 def gen_new_pass(request):
@@ -90,3 +92,11 @@ def gen_new_pass(request):
               f"Ваш пароль: {new_password}", settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER])
 
     return redirect('catalog:index')
+
+
+class ActivationSuccess(TemplateView):
+    template_name = 'users/email_verify_yes.html'
+
+
+class ActivationFailed(TemplateView):
+    template_name = 'users/email_verify_no.html'
