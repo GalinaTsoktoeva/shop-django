@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
@@ -10,7 +12,7 @@ from email.mime.text import MIMEText
 from blog.models import Blog
 
 
-class ArticleCreateView(CreateView):
+class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Blog
     fields = ('title', 'content', 'img', 'data_create', 'is_published', 'count_views',)
     success_url = reverse_lazy('blog:list')
@@ -23,7 +25,7 @@ class ArticleCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ArticleUpdateView(UpdateView):
+class ArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     fields = ('title', 'content', 'img', 'data_create', 'is_published', 'count_views',)
 
@@ -38,12 +40,12 @@ class ArticleUpdateView(UpdateView):
         return reverse('blog:view', args=[self.kwargs.get('pk')])
 
 
-class ArticleDeleteView(DeleteView):
+class ArticleDeleteView(LoginRequiredMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('blog:list')
 
 
-class ArticleListView(ListView):
+class ArticleListView(LoginRequiredMixin, ListView):
     model = Blog
 
     def get_queryset(self, *args, **kwargs):
@@ -52,7 +54,7 @@ class ArticleListView(ListView):
         return queryset
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(LoginRequiredMixin, DetailView):
     model = Blog
 
     def get_object(self, queryset=None):
@@ -62,6 +64,7 @@ class ArticleDetailView(DetailView):
         return self.object
 
 
+@login_required
 def toggle_activity(request, pk):
     article_item = get_object_or_404(Blog, pk=pk)
     if article_item.is_published:
@@ -73,6 +76,7 @@ def toggle_activity(request, pk):
     return redirect(reverse('blog:list'))
 
 
+@login_required
 def send_msg(request, pk):
     txt = 'hello, my dear! Congratulations! you have more than 100 views'
     article_item = get_object_or_404(Blog, pk=pk)
@@ -80,6 +84,7 @@ def send_msg(request, pk):
     send_email(sender, 'Python', txt)
 
     return redirect(reverse('blog:view', args=[pk]))
+
 
 def send_email(to_addr, subject, text):
     sender = 'galatsoktoeva@yandex.ru'

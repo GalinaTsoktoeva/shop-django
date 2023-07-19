@@ -1,8 +1,10 @@
 {% extends 'catalog/base.html' %}
 {% block content%}
+{% if perms.catalog.add_product %}
 <div class="col-12 mb-5">
     <a class="btn btn-primary" href="{% url 'catalog:create_product'%}">Добавить товар</a>
 </div>
+{% endif %}
 {% for object in object_list %}
 <div class="col-3">
     <div class="card mb-4 box-shadow">

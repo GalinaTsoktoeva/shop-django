@@ -1,5 +1,7 @@
 import random
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
@@ -49,7 +51,7 @@ class RegisterView(CreateView):
         return redirect('users:login')
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')
@@ -80,6 +82,7 @@ class EmailVerificationView(TemplateView):
             return redirect('users:verify_no')
 
 
+@login_required
 def gen_new_pass(request):
     new_password = ''
     chars = '+-/*!&$#?=@<>abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'

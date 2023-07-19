@@ -12,6 +12,7 @@ class Product(models.Model):
     data_create = models.DateTimeField(verbose_name='Дата создания', **NULLABLE)
     data_edit = models.DateTimeField(verbose_name='Дата изменения', **NULLABLE)
     user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, **NULLABLE)
+    is_published = models.BooleanField(default=False, **NULLABLE, verbose_name='опубликовано')
 
     def __str__(self):
         return f'{self.name} - {self.description}'
@@ -19,6 +20,12 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
+        permissions = [
+            (
+                "set_published_status",
+                "Can publish post"
+            )
+        ]
 
 
 class Category(models.Model):
