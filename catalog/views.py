@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.forms import inlineformset_factory
 from django.http import Http404
 from django.shortcuts import render
@@ -7,12 +9,14 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, VersionForm
-from catalog.models import Product, Version
+from catalog.models import Product, Version, Category
+from catalog.services import get_cache_version_for_product
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Product
     template_name = 'catalog/product_list.html'
+    permission_required = 'catalog.view_product'
     extra_context = {
         'is_active_main': 'active'
     }
@@ -47,9 +51,14 @@ def contacts(request):
     return render(request, 'catalog/contacts.html', context)
 
 
-class ProductDetailView(LoginRequiredMixin, DetailView):
+class ProductDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Product
+    permission_required = 'catalog.view_product'
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['objects'] = get_cache_version_for_product(self.object.pk)
+        return context_data
 
 class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
@@ -94,5 +103,23 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
+
+@login_required
+def category(request):
+
+    if settings.CACHE_ENABLED:
+        key = 'category_list'
+        category_list = cache.get(key)
+        if category_list is None:
+            category_list = Category.objects.all()
+            cache.set(key, category_list)
+    else:
+        category_list = Category.objects.all()
+
+    context = {
+        'object_list': category_list,
+        'title': 'Категории продуктов'
+    }
+    return render(request, 'catalog/category.html', context)
 
 
